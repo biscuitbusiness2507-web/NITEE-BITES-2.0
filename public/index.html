@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NITEE BITES | E-Commerce</title>
+    <style>
+        /* --- OxygenOS Inspired Minimalist Design Variables (Original Bottega Green) --- */
+        :root {
+            --bottega-green: #006643;
+            --pure-white: #ffffff;
+            --bg-light: #f7f9f8;
+            --text-dark: #111111;
+            --text-muted: #666666;
+            --radius-smooth: 16px;
+            --transition-fluid: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- Header / Navigation --- */
+        header {
+            position: sticky;
+            top: 0;
+            background-color: var(--pure-white);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--bottega-green);
+        }
+
+        .cart-icon-btn {
+            background: var(--bottega-green);
+            color: var(--pure-white);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fluid);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cart-icon-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* --- Main Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            flex: 1;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- SPECIAL PRODUCTS HERO BOX --- */
+        .specials-banner {
+            background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
+            border: 2px solid var(--bottega-green);
+            border-radius: var(--radius-smooth);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 24px rgba(0, 102, 67, 0.08);
+        }
+
+        .specials-title-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .specials-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--bottega-green);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .special-badge {
+            background: var(--bottega-green);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        /* --- Product Grid --- */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background: var(--pure-white);
+            border-radius: var(--radius-smooth);
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.02);
+            transition: var(--transition-fluid);
+            border: 1px solid rgba(0,0,0,0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 102, 67, 0.06);
+        }
+
+        /* --- Sold Out Card Modifications --- */
+        .product-card.sold-out-card {
+            opacity: 0.65;
+            filter: grayscale(35%);
+        }
+
+        .product-card.sold-out-card:hover {
+            transform: none;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.02);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 160px;
+            background-color: #f0f0f0;
+            border-radius: calc(var(--radius-smooth) - 4px);
+            margin-bottom: 1rem;
+            object-fit: cover;
+            transition: var(--transition-fluid);
+        }
+
+        .product-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--bottega-green);
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            border: none;
+            padding: 0.8rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fluid);
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: var(--bottega-green);
+            color: var(--pure-white);
+        }
+
+        .add-to-cart-btn.disabled-btn {
+            background-color: #e0e0e0 !important;
+            color: #777777 !important;
+            cursor: not-allowed !important;
+            border: none !important;
+        }
+
+        /* --- Sidebar: Cart & Checkout Summary --- */
+        .sidebar {
+            background: var(--pure-white);
+            border-radius: var(--radius-smooth);
+            padding: 1.8rem;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.02);
+            height: fit-content;
+            border: 1px solid rgba(0,0,0,0.02);
+            position: sticky;
+            top: 90px;
+        }
+
+        .sidebar-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--bg-light);
+            padding-bottom: 0.5rem;
+        }
+
+        .cart-items-list {
+            list-style: none;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--bg-light);
+            font-size: 0.95rem;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quantity-btn {
+            background: var(--bg-light);
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 1rem 0 1.5rem 0;
+            color: var(--bottega-green);
+        }
+
+        /* --- Form Inputs --- */
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--text-muted);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: var(--transition-fluid);
+            background-color: var(--bg-light);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--bottega-green);
+            background-color: var(--pure-white);
+            box-shadow: 0 0 0 3px rgba(0, 102, 67, 0.15);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: var(--bottega-green);
+            color: var(--pure-white);
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fluid);
+            margin-top: 0.5rem;
+        }
+
+        .checkout-btn:hover {
+            opacity: 0.95;
+            box-shadow: 0 4px 12px rgba(0, 102, 67, 0.2);
+        }
+
+        /* --- Custom Dialog / Notification Popups --- */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #111;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1000;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* --- Mobile Responsive 2-Column Grid --- */
+        @media (max-width: 600px) {
+            .products-grid, .products-container, .products {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px !important;
+                padding: 0 !important;
+            }
+
+            .product-card, .card {
+                margin: 0 !important;
+                width: 100% !important;
+                padding: 10px !important;
+            }
+
+            .product-card img, .card img {
+                height: 110px !important;
+                object-fit: contain !important;
+            }
+
+            .product-card h3, .card h3 {
+                font-size: 0.95rem !important;
+            }
+
+            .product-card p, .card p {
+                font-size: 0.9rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">NITEE BITES</div>
+        <button class="cart-icon-btn" onclick="document.getElementById('name-input').focus();">
+            🛒 Cart (<span id="cart-count-badge">0</span>)
+        </button>
+    </header>
+
+    <div class="container">
+
+        <main>
+            <!-- SPECIAL / FEATURED PRODUCTS SECTION -->
+            <section class="specials-banner" id="specials-section" style="display: none;">
+                <div class="specials-title-bar">
+                    <span class="specials-title">⚡ Midnight Specials</span>
+                    <span class="special-badge">LIMITED STOCK</span>
+                </div>
+                <div class="products-grid" id="specials-container">
+                    <!-- Special products dynamically injected here -->
+                </div>
+            </section>
+
+            <!-- REGULAR PRODUCTS CATALOG -->
+            <div class="section-title">All Items</div>
+            <div class="products-grid" id="products-container">
+                <!-- Regular products dynamically injected here -->
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <div class="sidebar-title">Your Order Summary</div>
+
+            <ul class="cart-items-list" id="cart-items-ui">
+                <p style="color: var(--text-muted); text-align: center; padding: 1rem 0;" id="empty-cart-msg">Your cart is empty</p>
+            </ul>
+
+            <div class="cart-total-row">
+                <span>Total:</span>
+                <span>₹<span id="cart-total-val">0</span></span>
+            </div>
+
+            <div class="sidebar-title" style="font-size: 1.1rem; margin-top: 1.5rem;">Delivery Credentials</div>
+            <form id="checkout-form" onsubmit="handleCheckout(event)">
+                <div class="input-group">
+                    <label for="name-input">FULL NAME</label>
+                    <input type="text" id="name-input" placeholder="Enter your name" required>
+                </div>
+                <div class="input-group">
+                    <label for="room-input">ROOM NUMBER / HOSTEL ADDRESS</label>
+                    <input type="text" id="room-input" placeholder="e.g., Room 302, Block C" required>
+                </div>
+                <div class="input-group">
+                    <label for="phone-input">PHONE NUMBER</label>
+                    <input type="tel" id="phone-input" pattern="[0-9]{10}" placeholder="10-digit mobile number" required>
+                </div>
+
+                <button type="submit" class="checkout-btn">Place Order</button>
+            </form>
+        </aside>
+    </div>
+
+    <div class="toast" id="toast-alert"></div>
+
+    <script>
+        let products = [];
+        let cart = {};
+
+        // Generates individual Product Cards (Handles Special & Sold Out logic)
+        function createProductCard(p) {
+            const imageSrc = p.image_url || p.img || 'https://via.placeholder.com/150';
+            
+            // Check if item is sold out: stock <= 0 OR is_available is false
+            const isSoldOut = (p.stock !== undefined && p.stock <= 0) || p.is_available === false;
+
+            return `
+                <div class="product-card ${isSoldOut ? 'sold-out-card' : ''}">
+                    <img class="product-image" src="${imageSrc}" alt="${p.name}">
+                    <div>
+                        <div class="product-title">${p.name}</div>
+                        <div class="product-price">₹${p.price}</div>
+                    </div>
+                    ${isSoldOut ? `
+                        <button class="add-to-cart-btn disabled-btn" disabled>Sold Out</button>
+                    ` : `
+                        <button class="add-to-cart-btn" onclick="addToCart(${p.id})">Add to Cart</button>
+                    `}
+                </div>
+            `;
+        }
+
+        async function initStore() {
+            try {
+                const response = await fetch('/api/products');
+                products = await response.json();
+
+                // Separate special items from regular items
+                const specialItems = products.filter(p => p.is_special || p.special);
+                const regularItems = products.filter(p => !p.is_special && !p.special);
+
+                // Render Special Products in Top Hero Box
+                const specialsSection = document.getElementById('specials-section');
+                const specialsContainer = document.getElementById('specials-container');
+
+                if (specialItems.length > 0) {
+                    specialsContainer.innerHTML = specialItems.map(createProductCard).join('');
+                    specialsSection.style.display = 'block';
+                } else {
+                    specialsSection.style.display = 'none';
+                }
+
+                // Render Regular Products
+                const container = document.getElementById('products-container');
+                container.innerHTML = (regularItems.length > 0 ? regularItems : products).map(createProductCard).join('');
+
+            } catch (err) {
+                console.error("Failed to fetch product catalog:", err);
+                showToast("❌ Error loading products from server.");
+            }
+        }
+
+        function addToCart(id) {
+            const targetProduct = products.find(p => p.id === id);
+            
+            // Prevent adding to cart if item is sold out
+            if ((targetProduct.stock !== undefined && targetProduct.stock <= 0) || targetProduct.is_available === false) {
+                showToast("❌ Sorry, this item is sold out!");
+                return;
+            }
+
+            if (cart[id]) {
+                cart[id].qty += 1;
+            } else {
+                cart[id] = { ...targetProduct, qty: 1 };
+            }
+            showToast(`Added ${cart[id].name} to cart!`);
+            updateCartUI();
+        }
+
+        function changeQty(id, delta) {
+            if (!cart[id]) return;
+            cart[id].qty += delta;
+            if (cart[id].qty <= 0) {
+                delete cart[id];
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const listElement = document.getElementById('cart-items-ui');
+            const totalValElement = document.getElementById('cart-total-val');
+            const badgeElement = document.getElementById('cart-count-badge');
+
+            const cartKeys = Object.keys(cart);
+
+            if (cartKeys.length === 0) {
+                listElement.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 1rem 0;" id="empty-cart-msg">Your cart is empty</p>`;
+                totalValElement.innerText = '0';
+                badgeElement.innerText = '0';
+                return;
+            }
+
+            let totalCost = 0;
+            let totalItemsCount = 0;
+
+            listElement.innerHTML = cartKeys.map(key => {
+                const item = cart[key];
+                const rowTotal = item.price * item.qty;
+                totalCost += rowTotal;
+                totalItemsCount += item.qty;
+
+                return `
+                    <li class="cart-item">
+                        <div>
+                            <div><strong>${item.name}</strong></div>
+                            <div style="font-size:0.8rem; color:var(--text-muted)">₹${item.price} × ${item.qty}</div>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button class="quantity-btn" onclick="changeQty(${item.id}, -1)">-</button>
+                            <span>${item.qty}</span>
+                            <button class="quantity-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                        </div>
+                    </li>
+                `;
+            }).join('');
+
+            totalValElement.innerText = totalCost;
+            badgeElement.innerText = totalItemsCount;
+        }
+
+        async function handleCheckout(event) {
+            event.preventDefault();
+
+            if (Object.keys(cart).length === 0) {
+                showToast("❌ Error: Add items to your cart before checking out!");
+                return;
+            }
+
+            const orderPayload = {
+                name: document.getElementById('name-input').value,
+                room: document.getElementById('room-input').value,
+                phone: document.getElementById('phone-input').value,
+                total: parseFloat(document.getElementById('cart-total-val').innerText),
+                items: Object.values(cart).map(item => ({ name: item.name, qty: item.qty, subtotal: item.price * item.qty }))
+            };
+
+            try {
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderPayload)
+                });
+
+                const outcome = await response.json();
+
+                if (outcome.success) {
+                    alert(`🎉 Success!\nThank you ${orderPayload.name}!\nYour order (ID: #${outcome.orderId}) has been logged in the backend database.`);
+                    cart = {};
+                    document.getElementById('checkout-form').reset();
+                    updateCartUI();
+                } else {
+                    showToast("❌ Checkout processing failed.");
+                }
+            } catch (err) {
+                console.error("Order dispatch failure:", err);
+                showToast("❌ Server communication drop. Try again.");
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-alert');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2500);
+        }
+
+        window.onload = initStore;
+    </script>
+</body>
+</html>

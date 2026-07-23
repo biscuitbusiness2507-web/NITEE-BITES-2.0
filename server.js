@@ -41,6 +41,16 @@ app.post('/api/orders', async (req, res) => {
         res.status(500).json({ success: false, error: 'Database write failed' });
     }
 });
+// GET Endpoint: Fetches all orders from the database
+app.get('/api/orders', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM orders ORDER BY id DESC');
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching orders:', err.stack);
+        res.status(500).json({ error: 'Database query failed' });
+    }
+});
 // PATCH Endpoint: Updates stock quantity for a product
 app.patch('/api/items/:id/stock', async (req, res) => {
   const { id } = req.params;

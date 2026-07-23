@@ -431,9 +431,20 @@
                     <label for="phone-input">PHONE NUMBER</label>
                     <input type="tel" id="phone-input" pattern="[0-9]{10}" placeholder="10-digit mobile number" required>
                 </div>
+                
 
                 <button type="submit" class="checkout-btn">Place Order</button>
             </form>
+        
+        <!-- Inventory Management Control Panel -->
+            <div style="margin-top: 2rem; padding: 1.2rem; background: var(--pure-white); border-radius: var(--radius-smooth); border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 18px rgba(0,0,0,0.02);">
+                <div class="sidebar-title" style="font-size: 1.1rem; margin-bottom: 1rem;">Stock Control Panel</div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <input type="number" id="adminItemId" placeholder="Item ID (e.g. 1)" style="padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
+                    <input type="number" id="adminStockQty" placeholder="New Stock Qty" style="padding: 0.6rem; border: 1px solid #e0e0e0; border-radius: 8px;">
+                    <button onclick="updateItemStock()" style="background: var(--bottega-green); color: white; border: none; padding: 0.7rem; border-radius: 8px; font-weight: 600; cursor: pointer;">Update Stock</button>
+                </div>
+            </div>
         </aside>
     </div>
 
@@ -544,6 +555,7 @@
                 const item = cart[key];
                 const rowTotal = item.price * item.qty;
                 totalCost += rowTotal;
+                
                 totalItemsCount += item.qty;
 
                 return `
@@ -563,6 +575,34 @@
 
             totalValElement.innerText = totalCost;
             badgeElement.innerText = totalItemsCount;
+        }async function updateItemStock() {
+            const itemId = document.getElementById('adminItemId').value;
+            const stockQty = document.getElementById('adminStockQty').value;
+
+            if (!itemId || stockQty === '') {
+                showToast("❌ Enter both Item ID and Stock Qty.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/items/${itemId}/stock`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ stock: stockQty })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast(`✅ ${data.item.name} stock updated to ${data.item.stock}!`);
+                    setTimeout(() => location.reload(), 1200);
+                } else {
+                    showToast(`❌ Error: ${data.error || 'Failed to update stock.'}`);
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("❌ Network error updating stock.");
+            }
         }
 
         async function handleCheckout(event) {

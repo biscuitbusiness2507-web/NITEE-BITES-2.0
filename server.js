@@ -41,7 +41,30 @@ app.post('/api/orders', async (req, res) => {
         res.status(500).json({ success: false, error: 'Database write failed' });
     }
 });
+// PATCH Endpoint: Updates stock quantity for a product
+app.patch('/api/items/:id/stock', async (req, res) => {
+  const { id } = req.params;
+  const { stock } = req.body;
 
+  try {
+    const newStock = parseInt(stock, 10);
+    const isAvailable = newStock > 0;
+
+    const result = await pool.query(
+      `UPDATE products SET stock = $1, is_available = $2 WHERE id = $3 RETURNING *`,
+      [newStock, isAvailable, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Item not found' });
+    }
+
+    res.json({ success: true, item: result.rows[0] });
+  } catch (err) {
+    console.error('Error updating stock:', err.stack);
+    res.status(500).json({ success: false, error: 'Database update failed' });
+  }
+});
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

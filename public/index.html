@@ -405,33 +405,55 @@
 
     <script>
         // Centralized Product Database State
-        
-
-       // Dynamic Application State variables
-let products = [];
+        let products = [];
 let cart = {};
+let currentFilter = 'all';
 
-// Fetch products directly from your backend API database
+// Fetch products from Neon/Render backend
 async function initStore() {
     try {
         const response = await fetch('/api/products');
         products = await response.json();
-        
-        const container = document.getElementById('products-container');
-        container.innerHTML = products.map(p => `
-            <div class="product-card">
-                <img class="product-image" src="${p.img}" alt="${p.name}">
-                <div>
-                    <div class="product-title">${p.name}</div>
-                    <div class="product-price">₹${p.price}</div>
-                </div>
-                <button class="add-to-cart-btn" onclick="addToCart(${p.id})">Add to Cart</button>
-            </div>
-        `).join('');
+        renderProducts();
     } catch (err) {
         console.error("Failed to fetch product catalog:", err);
         showToast("❌ Error loading products from server.");
     }
+}
+
+// Switch between "All Items" and "⭐ Specials"
+function filterProducts(category) {
+    currentFilter = category;
+    
+    document.getElementById('tab-all').classList.toggle('active', category === 'all');
+    document.getElementById('tab-special').classList.toggle('active', category === 'special');
+    
+    renderProducts();
+}
+
+// Render dynamic products based on active tab
+function renderProducts() {
+    const container = document.getElementById('products-container');
+    
+    const filteredProducts = currentFilter === 'special' 
+        ? products.filter(p => p.is_special === 1) 
+        : products;
+
+    if (filteredProducts.length === 0) {
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 2rem;">No special items available right now.</p>`;
+        return;
+    }
+
+    container.innerHTML = filteredProducts.map(p => `
+        <div class="product-card">
+            <img class="product-image" src="${p.img}" alt="${p.name}">
+            <div>
+                <div class="product-title">${p.name} ${p.is_special ? '⭐' : ''}</div>
+                <div class="product-price">₹${p.price}</div>
+            </div>
+            <button class="add-to-cart-btn" onclick="addToCart(${p.id})">Add to Cart</button>
+        </div>
+    `).join('');
 }
 
 function addToCart(id) {
@@ -496,7 +518,6 @@ function updateCartUI() {
     badgeElement.innerText = totalItemsCount;
 }
 
-// Submit finished payloads straight into your SQLite instance
 async function handleCheckout(event) {
     event.preventDefault();
     
@@ -544,6 +565,9 @@ function showToast(msg) {
 }
 
 window.onload = initStore;
+
+       // Dynamic Application State variables
+
     </script>
 </body>
 </html>
